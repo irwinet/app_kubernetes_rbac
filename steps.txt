@@ -4,7 +4,10 @@ minikube start --vm-driver=none  --extra-config=apiserver.authorization-mode=RBA
 ## Create keys and sign
 openssl genrsa -out irwinet.key 2048
 openssl req -new -key irwinet.key -out irwinet.csr -subj "/CN=irwinet/O=dev"
+
 sudo openssl x509 -req -in irwinet.csr -CA /root/.minikube/ca.crt -CAkey /root/.minikube/ca.key -CAcreateserial -out irwinet.crt -days 500
+openssl x509 -req -in apiet.csr -CA C:\\Users\\NEKSYS10\\.minikube\\ca.crt -CAkey C:\\Users\\NEKSYS10\\.minikube\\ca.key -CAcreateserial -out apiet.crt -days 500
+
 openssl x509 -in  irwinet.crt  -noout -text
 
 ## Isolated env
@@ -13,6 +16,13 @@ docker run --rm -ti -v $PWD:/test -w /test  -v /root/.minikube/ca.crt:/ca.crt -v
 
 ## Configure kubectl for user
 kubectl config set-cluster minikube --server=https://192.168.1.140:8443 --certificate-authority=/ca.crt
+
 kubectl config set-credentials irwinet --client-certificate=irwinet.crt --client-key=irwinet.key
+kubectl config set-credentials apiet --client-certificate=D:\\Clases Udemy\\Kubernetes\\app_kubernetes_rbac\\apiet.crt --client-key=D:\\Clases Udemy\\Kubernetes\\app_kubernetes_rbac\\apiet.key
+
 kubectl config set-context irwinet --cluster=minikube --user=irwinet
+kubectl config set-context apiet --cluster=minikube --user=apiet
+
 kubectl config use-context irwinet
+
+kubectl config get-contexts
